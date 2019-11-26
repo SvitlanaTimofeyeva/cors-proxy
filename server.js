@@ -24,11 +24,14 @@ app.all('*', function (req, res, next) {
           res.send(500, { error: 'There is no Target-Endpoint header in the request' });
           return;
       }
-      request({ url: targetURL, method: req.method, json: req.body, headers: {
+      const headers = {
         'Authorization': 'Basic dTIxODAzNjpKaklLUENkc281NFRaQnFB',
-        'Range': req.headers.range,
         'sec-fetch-mode': 'no-cors'
-      } },
+      }
+      if (req.headers.range) {
+        headers['Range'] = req.headers.range;
+      }
+      request({ url: targetURL, method: req.method, json: req.body, headers },
         function (error, response, body) {
             if (error) {
                 console.error('error: ' + error, req.headers)
@@ -37,7 +40,7 @@ app.all('*', function (req, res, next) {
   }
 });
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 5000);
 
 app.listen(app.get('port'), function () {
     console.log('Proxy server listening on port ' + app.get('port'));
